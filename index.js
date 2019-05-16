@@ -9,8 +9,17 @@ const typeMap = {
   orderList: {
     reg: /^(\d\s*\.\s*)/, // 正则匹配表达式
   },
+  /**
+   * title
+   */
   title: {
     reg: /^(\s*\#+)/
+  },
+  /**
+   * 被标识是英文单词或片段
+   */
+  word: {
+    reg: /\b(\w|\+|\-|\*|\s|\%|\/)+\b/g
   }
 }
 const rl = readline.createInterface({
@@ -19,21 +28,24 @@ const rl = readline.createInterface({
 });
 
 function regWord(line) {
-  let reg = /\b(\w|\+|\-|\*|\s|\%|\/)+\b/g;
+  let reg = typeMap.word.reg;
   let regResult = null
-  let result = line
+
   let results = []
+  let start = checkLine(line, typeMap.orderList.reg)
+  let result = start ? line.replace(start, '') : line
 
   while ((regResult = reg.exec(line)) != null) {
     results.push(regResult[0])
   }
-  console.log("regResult", regResult, results)
   if (results.length) {
     results.map(key => {
       result = result.replace(key, "`" + key + "`")
     })
 
   }
+
+  result = start ? start + result : result
 
   return result
 }
@@ -53,7 +65,7 @@ rl.on('line', (line) => {
   if (!checkLine(line, typeMap.title.reg)) {
     text += regWord(line) + '  \n'
   } else {
-    text += line + '  \n'
+    text += line + '\n'
   }
 
 });
