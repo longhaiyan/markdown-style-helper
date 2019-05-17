@@ -1,6 +1,6 @@
 {
   "name": "markdown-style-helper",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "markdown 文件格式优化工具",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,9 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/longhaiyan/markdown-style-helper/issues"
+  },
+  "bin": {
+    "md-style": "./index.js"
   },
   "homepage": "https://github.com/longhaiyan/markdown-style-helper#readme"
 }
