@@ -16,6 +16,7 @@ const rl = readline.createInterface({
 
 
 function regWord1(line, start) {
+  console.log("line, start", start)
   let reg = typeMap.word.reg;
   let regResult = null
 
@@ -23,17 +24,19 @@ function regWord1(line, start) {
   // let start = this.checkLine(line, typeMap.orderList.reg)
   let result = line.replace(start, '')
 
-  while ((regResult = reg.exec(line)) != null) {
-    results.push(regResult[0])
+  while ((regResult = reg.exec(result)) != null) {
+    results.push({ key: regResult[0], index: })
   }
   if (results.length) {
     results.map(key => {
-      result = result.replace(key, " `" + key.trim() + "` ")
+      if (key.trim()) {
+        result = result.replace(key.trim(), "`" + key.trim() + "`")
+      }
     })
 
   }
 
-  result = start + result
+  result = start + result + '\n'
 
   return result
 }
@@ -42,18 +45,19 @@ rl.on('line', (line) => {
   let noCheck = checkTypes(line, 'noCheckType')
   let check = checkTypes(line, 'checkType')
 
-  if (!noCheck) {
-    // 不需要做匹配
+  if (noCheck) {
+    console.log("不需要做匹配")
     textArr.push(line + '\n')
   } else if (check) {
-    // 需要匹配
+    console.log("需要匹配")
     console.log("check", check)
-    // textArr.push(regWord1(line, check))
+    textArr.push(regWord1(line, check.result[0]))
   } else if (checkTypes(line, 'checkType')) {
-    // 需要继续检验，才能确定是否需要检验
+    console.log("需要继续检验，才能确定是否需要检验")
 
   } else {
-
+    console.log("else")
+    textArr.push(line + '\n')
   }
 
 });
