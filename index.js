@@ -14,6 +14,9 @@ const rl = readline.createInterface({
   crlfDelay: Infinity
 });
 
+function insertStr(source, start, newStr) {
+  return source.slice(0, start) + source.slice(start).replace(newStr, "`" + newStr + "`");
+}
 
 function regWord1(line, start) {
   console.log("line, start", start)
@@ -25,13 +28,16 @@ function regWord1(line, start) {
   let result = line.replace(start, '')
 
   while ((regResult = reg.exec(result)) != null) {
-    results.push({ key: regResult[0], index: })
+    if (regResult[0].trim()) {
+      results.push({ key: regResult[0].trim(), index: regResult.index })
+    }
   }
   if (results.length) {
-    results.map(key => {
-      if (key.trim()) {
-        result = result.replace(key.trim(), "`" + key.trim() + "`")
+    results.map(({ key, index }, i) => {
+      if (i > 0) {
+        index += 2
       }
+      result = insertStr(result, index, key)
     })
 
   }
