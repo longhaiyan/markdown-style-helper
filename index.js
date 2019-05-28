@@ -18,7 +18,7 @@ function insertStr(source, start, newStr) {
   return source.slice(0, start) + source.slice(start).replace(newStr, "`" + newStr + "`");
 }
 
-function regWord1(line, start) {
+function regWord1(line, start = '') {
   console.log("line, start", start)
   let reg = typeMap.word.reg;
   let regResult = null
@@ -26,12 +26,13 @@ function regWord1(line, start) {
   let results = []
   // let start = this.checkLine(line, typeMap.orderList.reg)
   let result = line.replace(start, '')
-
+  console.log("regLoop(line)", regLoop(line))
   while ((regResult = reg.exec(result)) != null) {
     if (regResult[0].trim()) {
       results.push({ key: regResult[0].trim(), index: regResult.index })
     }
   }
+
   if (results.length) {
     results.map(({ key, index }, i) => {
       if (i > 0) {
@@ -43,8 +44,31 @@ function regWord1(line, start) {
   }
 
   result = start + result + '\n'
+  // console.log("regWord1", result)
 
   return result
+}
+
+const loopRlts = []
+
+function regLoop(line) {
+  console.log("line", line)
+  let regResult = null
+  for (let i = 0, l = typeMap.checkType.length; i < l; i++) {
+    regResult = typeMap.checkType[i].reg.exec(line)
+    if (regResult) {
+      loopRlts.push({ key: regResult[0], index: regResult.index })
+      console.log("regResult", regResult)
+      break;
+    }
+  }
+  if (regResult) {
+    let key = regResult[0];
+    let index = regResult.index;
+    return regLoop(line.slice(index + key.length))
+  } else {
+    return loopRlts
+  }
 }
 
 rl.on('line', (line) => {
@@ -58,12 +82,12 @@ rl.on('line', (line) => {
     console.log("需要匹配")
     console.log("check", check)
     textArr.push(regWord1(line, check.result[0]))
-  } else if (checkTypes(line, 'checkType')) {
-    console.log("需要继续检验，才能确定是否需要检验")
+  } else if (checkTypes(line, 'goOnCheckType')) {
+    console.log("控制跳过检验")
 
   } else {
     console.log("else")
-    textArr.push(line + '\n')
+    textArr.push(regWord1(line))
   }
 
 });
